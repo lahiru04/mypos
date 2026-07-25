@@ -179,6 +179,16 @@ namespace FreePOS.Views.finance
             }
             else { lv_SearchFoodItem.Visibility = Visibility.Hidden; }
         }
+        public void lv_SearchFoodItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (lv_SearchFoodItem.SelectedItem != null)
+            {
+                productsaleorpurchaseviewmodel item = (productsaleorpurchaseviewmodel)lv_SearchFoodItem.SelectedItem;
+                addItem_To_cart(item);
+                tb_Search.Text = "";
+                lv_SearchFoodItem.Visibility = Visibility.Hidden;
+            }
+        }
         private void tb_Search_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (tb_Search.Text != null && tb_Search.Text != "")

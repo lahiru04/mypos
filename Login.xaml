@@ -2,21 +2,66 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        Title="Start System" Height="328.503" Width="509.79" Background="Gray" Opacity="0.9" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen">
+        Title="Start System" Height="520" Width="900" Background="Transparent" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen">
+
     <Grid>
-        <TextBox x:Name="tb_Name" FontSize="12" HorizontalAlignment="Left" Margin="132,85,0,0"  VerticalAlignment="Top" Width="254" ToolTip="Username" BorderBrush="#FF494646" Foreground="#FFD1D1D1">
-        </TextBox>
-        <PasswordBox x:Name="tb_Pasword" FontSize="12"  HorizontalAlignment="Left" Margin="132,133,0,0" VerticalAlignment="Top" Width="254" ToolTip="Password" BorderBrush="#FF494646" Foreground="#FFD1D1D1" KeyDown="PressEnter">
+        <!-- Outer rounded card to emulate tablet frame -->
+        <Border CornerRadius="16" Background="#FFF7F9FB" Padding="18" Margin="12" Effect="{DynamicResource DropShadow}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="420" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-        </PasswordBox>
-        <Button Click="btn_Login" Content="Login" HorizontalAlignment="Left" Margin="212,206,0,0" VerticalAlignment="Top" Width="108" Height="36" FontSize="10" Background="#FF575555">
+                <!-- Left: Branding + Login card -->
+                <StackPanel Grid.Column="0" Margin="24">
+                    <TextBlock Text="Expresale" FontSize="26" FontWeight="Bold" Foreground="#222" />
+                    <TextBlock Text="Realiable POS System" Foreground="#666" />
 
-        </Button>
-        <Button Click="btn_CloseApplication" Content="Close Application" HorizontalAlignment="Left" Margin="194,253,0,0" VerticalAlignment="Top" Width="143" Height="36" FontSize="10" Background="#FF575555">
-        </Button>
-        <Label Content="FreePOS" HorizontalAlignment="Center" Margin="0,25,0,0" VerticalAlignment="Top"  FontFamily="DokChampa" FontSize="24" Foreground="#FFDEDEDE"/>
-        <Label Content="www.freepos.pk +92 302 4759550  (Release 4.0 09/07/2022)"  VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Margin="0,0,0,0" FontSize="12" Background="#FF363636" Height="25" Foreground="#DDC7C7C7"/>
-        
+                    <!-- white login card -->
+                    <Border Background="White" CornerRadius="8" Padding="20" Width="360">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#33000000" BlurRadius="12" ShadowDepth="2" />
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Login" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+                            <TextBox x:Name="tb_Name" Height="36" Margin="0,6,0,6" Padding="8" FontSize="14" />
+                            <PasswordBox x:Name="tb_Pasword" Height="36" Margin="0,6,0,6" Padding="8" FontSize="14" KeyDown="PressEnter" />
+
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6,0,12">
+                                <CheckBox x:Name="keepLogged" VerticalAlignment="Center" />
+                                <TextBlock Text="Keep me logged in" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="#666" />
+                            </StackPanel>
+
+                            <Button Click="btn_Login" Content="Log in" Height="40" Background="#2D84FF" Foreground="White" FontWeight="Bold" BorderThickness="0" />
+
+                            <StackPanel Orientation="Vertical" Margin="0,12,0,0" HorizontalAlignment="Center">
+                                <Border Width="48" Height="48" CornerRadius="8" Background="#F1F7FF" BorderBrush="#D6E9FF" BorderThickness="1" Margin="0,6,0,0" HorizontalAlignment="Center">
+                                    <Viewbox Stretch="Uniform"/>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Right: illustration-style shapes -->
+                <Grid Grid.Column="1">
+                    <Canvas>
+
+                       
+
+                        <Image Source="/FreePOS;component/assets/marketplace.png" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Width="400"></Image>
+
+                    </Canvas>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Resources -->
+        <Grid.Resources>
+            <DropShadowEffect x:Key="DropShadow" Color="#40000000" BlurRadius="18" ShadowDepth="4" />
+        </Grid.Resources>
     </Grid>
 
 </Window>

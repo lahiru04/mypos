@@ -30,6 +30,23 @@ namespace FreePOS.Views.product
         public ProductList()
         {
             InitializeComponent();
+            // Load all products on window open so newly added products are visible immediately
+            LoadAllProducts();
+        }
+        private void LoadAllProducts()
+        {
+            try
+            {
+                var list = productrepo.get();
+                items = list;
+                dg.ItemsSource = null;
+                dg.ItemsSource = items;
+                UpdateLayout();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         private void Btn_Search_Transactions_Click(object sender, RoutedEventArgs e)
         {
