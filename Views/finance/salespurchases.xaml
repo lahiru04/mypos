@@ -1,0 +1,49 @@
+﻿<Window x:Class="FreePOS.Views.finance.salespurchases"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FreePOS.Views.finance"
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        Width="auto"
+        Height="auto"
+        Title="List">
+    <Grid>
+        <Label Content="From Date" HorizontalAlignment="Left" Margin="6,16,0,0" VerticalAlignment="Top"/>
+        <DatePicker Name="FromDate" HorizontalAlignment="Left" Margin="187,16,0,0" VerticalAlignment="Top"/>
+        <Label Content="To Date" HorizontalAlignment="Left" Margin="328,16,0,0" VerticalAlignment="Top"/>
+        <DatePicker Name="ToDate" HorizontalAlignment="Left" Margin="384,16,0,0" VerticalAlignment="Top"/>
+        <Button Click="Btn_Search_Transactions_Click" Content="Search" HorizontalAlignment="Left" Margin="554,16,0,0" VerticalAlignment="Top" Width="75"/>
+
+        <DataGrid
+            x:Name="dg"
+            Margin="0,60,0,0"
+            AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding id}" />
+                <DataGridTextColumn Header="Date" Binding="{Binding date}" />
+                <DataGridTextColumn Header="Account" Binding="{Binding accountname}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding name}" />
+                <DataGridTextColumn Header="Creator" Binding="{Binding createdby}" />
+                <DataGridTextColumn Header="Party" Binding="{Binding target}" />
+                <DataGridTextColumn Header="Status" Binding="{Binding status}" />
+                <DataGridTextColumn Header="Amount" Binding="{Binding amount}" />
+                <DataGridTemplateColumn Header="Details">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Click="details">Details</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Report">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Click="report">Report</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
