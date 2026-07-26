@@ -46,6 +46,9 @@ namespace FreePOS.Views
             var vendors = 0;
             var product_count = 0;
             var users = 0;
+            decimal monthly_target = 0;
+            decimal monthly_revenue = 0;
+            decimal today_revenue = 0;
             if (userutils.loggedinuserd.role == "superadmin" || userutils.loggedinuserd.role == "admin")
             {
                 sales = -financetransactionrepo.gettransactionsumbyaccountnamesandfromtodate(new string[] { "pos sale","sale","service sale"},DateTime.Now,DateTime.Now);
@@ -69,10 +72,39 @@ namespace FreePOS.Views
                 product_count = 0;
             }
 
-            _ = SetDashboardHtmlAsync(sales, customers, vendors, users, product_count);
+            try
+            {
+                var mrepo = new data.dapper.monthly_targetrepo();
+                var mlist = mrepo.get();
+                var current = mlist.Where(m => m.month != null && ((DateTime)m.month).Month == DateTime.Now.Month && ((DateTime)m.month).Year == DateTime.Now.Year).FirstOrDefault();
+                if (current != null && current.target != null) monthly_target = current.target.Value;
+
+                var fromMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                var nextMonth = fromMonth.AddMonths(1);
+                using (var connection = new MySqlConnection(databaseutils.connectionstring))
+                {
+                    // sum invoice_payment.payment_amount for current month
+                    var mres = connection.ExecuteScalar<decimal?>("select sum(payment_amount) from invoice_payment where created_at >= @from and created_at < @to and deleted_at is null;", new { from = fromMonth, to = nextMonth });
+                    monthly_revenue = mres ?? 0;
+
+                    // today revenue: sum for today
+                    var fromToday = DateTime.Today;
+                    var toTomorrow = fromToday.AddDays(1);
+                    var tres = connection.ExecuteScalar<decimal?>("select sum(payment_amount) from invoice_payment where created_at >= @from and created_at < @to and deleted_at is null;", new { from = fromToday, to = toTomorrow });
+                    today_revenue = tres ?? 0;
+                }
+            }
+            catch
+            {
+                monthly_target = 0;
+                monthly_revenue = 0;
+                today_revenue = 0;
+            }
+
+            _ = SetDashboardHtmlAsync(sales, customers, vendors, users, product_count, monthly_target, monthly_revenue, today_revenue);
         }
 
-        private async System.Threading.Tasks.Task SetDashboardHtmlAsync(int sales, int customers, int vendors, int users, int product_count)
+        private async System.Threading.Tasks.Task SetDashboardHtmlAsync(int sales, int customers, int vendors, int users, int product_count, decimal monthly_target, decimal monthly_revenue, decimal today_revenue)
         {
             try
             {
@@ -93,6 +125,20 @@ namespace FreePOS.Views
                     html = html.Replace("vendor_count", vendors.ToString());
                     html = html.Replace("product_count", product_count.ToString());
                     html = html.Replace("user_count", users.ToString());
+
+                    // replace monthly target and revenues
+                    html = html.Replace("monthly_target", monthly_target.ToString());
+                    html = html.Replace("monthly_revenue", monthly_revenue.ToString());
+                    html = html.Replace("today_revenue", today_revenue.ToString());
+
+                    // percentage of target achieved
+                    var percent = 0m;
+                    if (monthly_target > 0) percent = Math.Round(((decimal)monthly_revenue / monthly_target) * 100, 2);
+                    html = html.Replace("monthly_target_percent", percent.ToString() + "%");
+                    // simple change indicator placeholder
+                    var change = "";
+                    if (monthly_target > 0) change = ((percent - 0) >= 0 ? "+" : "") + "0%"; else change = "";
+                    html = html.Replace("monthly_target_change", change);
                 }
                 else
                 {
@@ -241,6 +287,15 @@ namespace FreePOS.Views
         private void cashclosing(object sender, RoutedEventArgs e)
         {
             var w = new Views.finance.cashclosing();
+            userutils.authorizerole(w, new string[] { "superadmin", "admin" });
+        }
+        private void monthlytargetadd(object sender, RoutedEventArgs e)
+        {
+            new Views.finance.monthlytargetadd().Show();
+        }
+        private void monthlytargetview(object sender, RoutedEventArgs e)
+        {
+            var w = new Views.finance.monthlytarget();
             userutils.authorizerole(w, new string[] { "superadmin", "admin" });
         }
         #endregion menuitem_finance

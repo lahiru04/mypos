@@ -149,6 +149,7 @@
     <Compile Include="data\dapper\financeaccount.cs" />
     <Compile Include="data\dapper\cashclosing.cs" />
     <Compile Include="data\dapper\invoice.cs" />
+    <Compile Include="data\dapper\monthlytarget.cs" />
     <Compile Include="data\dapper\softwaresetting.cs" />
     <Compile Include="data\dapper\productsalepurchase.cs" />
     <Compile Include="data\dapper\productsub.cs" />
@@ -169,6 +170,12 @@
     </Compile>
     <Compile Include="Views\finance\ledger.xaml.cs">
       <DependentUpon>ledger.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\finance\monthlytarget.xaml.cs">
+      <DependentUpon>monthlytarget.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\finance\monthlytargetadd.xaml.cs">
+      <DependentUpon>monthlytargetadd.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\finance\salenew.xaml.cs">
       <DependentUpon>salenew.xaml</DependentUpon>
@@ -265,6 +272,12 @@
     </Page>
     <Page Include="Views\finance\ledger.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\finance\monthlytarget.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\finance\monthlytargetadd.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\finance\salenew.xaml">

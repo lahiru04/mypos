@@ -1,0 +1,20 @@
+<Window x:Class="FreePOS.Views.finance.monthlytarget"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FreePOS.Views.finance"
+        mc:Ignorable="d"
+        Title="Monthly Targets">
+    <Grid>
+        <DataGrid x:Name="dg" Margin="0,0,0,0" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding id}" />
+                <DataGridTextColumn Header="Month" Binding="{Binding month}" />
+                <DataGridTextColumn Header="Target" Binding="{Binding target}" />
+                <DataGridTextColumn Header="Created At" Binding="{Binding created_at}" />
+                <DataGridTextColumn Header="User" Binding="{Binding username}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

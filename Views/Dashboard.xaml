@@ -39,6 +39,8 @@
                 <MenuItem Header="Transactions" Click="transactionsshow"/>
                 <MenuItem Header="Cash closing" Click="cashclosingadd"/>
                 <MenuItem Header="Cash closing report" Click="cashclosing"/>
+                <MenuItem Header="Add Target" Click="monthlytargetadd"/>
+                <MenuItem Header="Monthly Targets" Click="monthlytargetview"/>
             </MenuItem>
             <MenuItem Header="Others">
                 <MenuItem Header="Setting" Click="mi_Setting"/>
