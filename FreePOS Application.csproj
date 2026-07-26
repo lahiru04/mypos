@@ -148,6 +148,7 @@
     <Compile Include="data\dapper\financetransaction.cs" />
     <Compile Include="data\dapper\financeaccount.cs" />
     <Compile Include="data\dapper\cashclosing.cs" />
+    <Compile Include="data\dapper\invoice.cs" />
     <Compile Include="data\dapper\softwaresetting.cs" />
     <Compile Include="data\dapper\productsalepurchase.cs" />
     <Compile Include="data\dapper\productsub.cs" />
@@ -377,7 +378,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Business Book_TemporaryKey.pfx" />
     <None Include="data\databaseconnection.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -402,6 +402,7 @@
     <Resource Include="assets\pattern1.png" />
     <Resource Include="assets\pattern2.png" />
     <Resource Include="assets\marketplace.png" />
+    <Content Include="assets\dashboard.html" />
     <Content Include="data\freepos-sqlserver.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -440,6 +441,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit">
       <Version>7.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Web.WebView2">
+      <Version>1.0.4078.44</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.SDK.Contracts">
       <Version>10.0.19041.1</Version>

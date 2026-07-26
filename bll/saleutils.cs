@@ -40,6 +40,49 @@ namespace FreePOS.bll
         public static void newsale(List<productsaleorpurchaseviewmodel> saleList, double totalpayment, int customerId)
         {
             var saleid = financeutils.insertSaleTransactions("sale", saleList, totalpayment, customerId);
+
+            try
+            {
+                // create invoice record
+                var invoicerepo = new data.dapper.invoicerepo();
+                var invoiceItemRepo = new data.dapper.invoiceitemrepo();
+                var invoicePaymentRepo = new data.dapper.invoicepaymentrepo();
+
+                var inv = new data.dapper.invoice();
+                inv.invoice_no = DateTime.Now.ToString("yyyyMMddHHmmss");
+                inv.customer = (customerId == 0) ? (int?)null : customerId;
+                inv.created_at = DateTime.Now;
+                inv.amount = (decimal)saleList.Sum(a => a.total);
+                inv.added_by = userutils.loggedinuserd.id;
+                inv = invoicerepo.save(inv);
+
+                // create invoice items
+                foreach (var item in saleList)
+                {
+                    var invItem = new data.dapper.invoice_item();
+                    invItem.invoice_id = inv.id;
+                    invItem.product_id = item.id;
+                    invItem.qty = item.quantity;
+                    invoiceItemRepo.save(invItem);
+                }
+
+                // create invoice payment record if any payment made
+                if (totalpayment > 0)
+                {
+                    var pay = new data.dapper.invoice_payment();
+                    pay.invoice_id = inv.id;
+                    pay.payment_type = 1; // 1 = cash (default)
+                    pay.payment_amount = (decimal)totalpayment;
+                    pay.created_at = DateTime.Now;
+                    invoicePaymentRepo.save(pay);
+                }
+            }
+            catch (Exception ex)
+            {
+                // swallow here but could log
+                Console.WriteLine(ex.Message);
+            }
+
             Task.Run(() => {
                 insertSellingProductsInDatabase(saleList, saleid);
                 inventoryutils.updateInventoryonsale(saleList, saleid);

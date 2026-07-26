@@ -13,6 +13,8 @@ using System;
 using System.Collections.ObjectModel;
 using FreePOS.data.dapper;
 using System.Windows.Controls;
+using MySql.Data.MySqlClient;
+using Dapper;
 
 namespace FreePOS.Views
 {
@@ -42,6 +44,7 @@ namespace FreePOS.Views
             var sales = 0;
             var customers = 0;
             var vendors = 0;
+            var product_count = 0;
             var users = 0;
             if (userutils.loggedinuserd.role == "superadmin" || userutils.loggedinuserd.role == "admin")
             {
@@ -51,78 +54,72 @@ namespace FreePOS.Views
                 users = userrepo.getbywherein("role", new object[] { "admin", "user" }).Count();
             }
             
-            string html = @"<html>
-<head>
-  <style>
-html{overflow:hidden;height:200px;}
-    .main{
-      font-family: arial;
-    }
-    .blocks{
-      float: left;
-      width: 20%;
-      margin: 1%;
-      border: 1px solid #ddd;
-      padding: 10px 20px 10px 20px;
-      border-radius: 4px; 
-    }
-    .blocks .title{
-      margin: 0;
-      font-weight: 300;
-      color: #888;
-    }
-.blocks p{
-      text-align: center;
-      font-size: 55px;
-    }
-    p.a{
-      color:rgb(98, 147, 211);
-    }
-    p.b{
-      color:#f5584c;
-    }
-    p.c{
-      color:#aa6edb;
-    }
-    p.d{
-      color:#7fb856;
-    }
-.blocks .footer{
-      margin: 0;
-      font-weight: 100;
-      color: #888;
-      font-size:10px;
-      text-align: center;
-    }
-    
-  </style>
-</head>
-<body style='background-color:#f0f0f0' scroll='no'>
-  <div class='main'>
-    <div class='blocks'>
-      <span class='title'>Sales</span>
-      <p class='a'>" + sales + @"</p>
-      <span class='footer'>Total Sales</span>
-    </div>
-    <div class='blocks'>
-      <span class='title'>Customers</span>
-       <p class='b'>" + customers + @"</p>
-        <span class='footer'>Included All Types</span>
-    </div>
-    <div class='blocks'>
-      <span class='title'>Vendors</span>
-       <p class='c'>" + vendors + @"</p>
-        <span class='footer'>Included All Types</span>
-    </div>
-    <div class='blocks'>
-      <span class='title'>Users</span>
-       <p class='d'>" + users + @"</p>
-        <span class='footer'>All software users</span>
-    </div>
-  <div>
-</body>
-</html>";
-            webview.NavigateToString(html);
+            // Update WebView content asynchronously (fire-and-forget)
+            // get product count where status = 1
+            try
+            {
+                var conn = databaseutils.connectionstring;
+                using (var connection = new MySqlConnection(conn))
+                {
+                    product_count = connection.QuerySingle<int>("select count(*) from product where status=1");
+                }
+            }
+            catch
+            {
+                product_count = 0;
+            }
+
+            _ = SetDashboardHtmlAsync(sales, customers, vendors, users, product_count);
+        }
+
+        private async System.Threading.Tasks.Task SetDashboardHtmlAsync(int sales, int customers, int vendors, int users, int product_count)
+        {
+            try
+            {
+                string assetsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "dashboard.html");
+                if (!System.IO.File.Exists(assetsPath))
+                {
+                    var projectRoot = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", ".."));
+                    var alt = System.IO.Path.Combine(projectRoot, "assets", "dashboard.html");
+                    if (System.IO.File.Exists(alt)) assetsPath = alt;
+                }
+
+                string html;
+                if (System.IO.File.Exists(assetsPath))
+                {
+                    html = System.IO.File.ReadAllText(assetsPath);
+                    html = html.Replace("sales_value", sales.ToString());
+                    html = html.Replace("customer_count", customers.ToString());
+                    html = html.Replace("vendor_count", vendors.ToString());
+                    html = html.Replace("product_count", product_count.ToString());
+                    html = html.Replace("user_count", users.ToString());
+                }
+                else
+                {
+                    html = $"<html><body><h3>Sales: {sales}</h3><h3>Customers: {customers}</h3><h3>Vendors: {vendors}</h3><h3>Users: {users}</h3><p>assets/dashboard.html not found.</p></body></html>";
+                }
+
+                // Ensure WebView2 core is initialized before navigating
+                try
+                {
+                    await webview.EnsureCoreWebView2Async(null).ConfigureAwait(true);
+                }
+                catch
+                {
+                    // Ignore initialization errors; NavigateToString may still work
+                }
+
+                // Navigate on UI thread
+                await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    webview.NavigateToString(html);
+                });
+            }
+            catch (Exception ex)
+            {
+                var fallback = $"<html><body><h3>Sales: {sales}</h3><h3>Customers: {customers}</h3><h3>Vendors: {vendors}</h3><h3>Users: {users}</h3><p>Error: {ex.Message}</p></body></html>";
+                await System.Windows.Application.Current.Dispatcher.InvokeAsync(() => webview.NavigateToString(fallback));
+            }
         }
 
         #region customer
@@ -136,6 +133,11 @@ html{overflow:hidden;height:200px;}
             userutils.authorizerole(w, new string[] { "superadmin", "admin" });
         }
         #endregion customer
+
+        private void ReloadDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            loaccounts();
+        }
 
         #region vendor
         private void mi_ViewAllVendors(object sender, RoutedEventArgs e)

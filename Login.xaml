@@ -16,7 +16,7 @@
                 <!-- Left: Branding + Login card -->
                 <StackPanel Grid.Column="0" Margin="24">
                     <TextBlock Text="Expresale" FontSize="26" FontWeight="Bold" Foreground="#222" />
-                    <TextBlock Text="Realiable POS System" Foreground="#666" />
+                    <TextBlock Text="" Foreground="#666" />
 
                     <!-- white login card -->
                     <Border Background="White" CornerRadius="8" Padding="20" Width="360">
@@ -30,16 +30,13 @@
                             <PasswordBox x:Name="tb_Pasword" Height="36" Margin="0,6,0,6" Padding="8" FontSize="14" KeyDown="PressEnter" />
 
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6,0,12">
-                                <CheckBox x:Name="keepLogged" VerticalAlignment="Center" />
-                                <TextBlock Text="Keep me logged in" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="#666" />
+                              
+                                <TextBlock Text="" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="#666" />
                             </StackPanel>
 
                             <Button Click="btn_Login" Content="Log in" Height="40" Background="#2D84FF" Foreground="White" FontWeight="Bold" BorderThickness="0" />
 
                             <StackPanel Orientation="Vertical" Margin="0,12,0,0" HorizontalAlignment="Center">
-                                <Border Width="48" Height="48" CornerRadius="8" Background="#F1F7FF" BorderBrush="#D6E9FF" BorderThickness="1" Margin="0,6,0,0" HorizontalAlignment="Center">
-                                    <Viewbox Stretch="Uniform"/>
-                                </Border>
                             </StackPanel>
                         </StackPanel>
                     </Border>
